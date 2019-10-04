@@ -16,7 +16,7 @@ export const formatText = ({ content, link }: TextOptions) => {
     '-----------------------------------------------------------\n' +
     '<br />\n' +
     '<h3 style="color: #FF4F81;">\n' +
-    '👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈\n' +
+    '👉  PLEASE ANSWER ON SLACK THEN CLOSE THIS TICKET  👈\n' +
     '</h3>\n' +
     `<a href="${link}">${link}</a>\n` +
     '<br/>\n' +

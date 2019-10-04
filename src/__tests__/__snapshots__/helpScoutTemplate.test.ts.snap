@@ -10,7 +10,7 @@ exports[`helpScoutTemplate formatText expect to return HTML from MD 1`] = `
 -----------------------------------------------------------
 <br />
 <h3 style=\\"color: #FF4F81;\\">
-👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+👉  PLEASE ANSWER ON SLACK THEN CLOSE THIS TICKET  👈
 </h3>
 <a href=\\"https://link.github.com\\">https://link.github.com</a>
 <br/>
@@ -32,7 +32,7 @@ exports[`helpScoutTemplate formatText expect to return escaped HTML from MD 1`] 
 -----------------------------------------------------------
 <br />
 <h3 style=\\"color: #FF4F81;\\">
-👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+👉  PLEASE ANSWER ON SLACK THEN CLOSE THIS TICKET  👈
 </h3>
 <a href=\\"https://link.github.com\\">https://link.github.com</a>
 <br/>
@@ -48,7 +48,7 @@ ultricies rhoncus turpis, ut rutrum nibh aliquet sit amet.</p>
 -----------------------------------------------------------
 <br />
 <h3 style=\\"color: #FF4F81;\\">
-👉  PLEASE ANSWER ON GITHUB THEN CLOSE THIS TICKET  👈
+👉  PLEASE ANSWER ON SLACK THEN CLOSE THIS TICKET  👈
 </h3>
 <a href=\\"https://link.github.com\\">https://link.github.com</a>
 <br/>

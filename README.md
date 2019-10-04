@@ -1,6 +1,6 @@
-# GitHub HelpScout Collector
+# Slack HelpScout Collector
 
-This is a server to collect `issues` events from GitHub through [webhooks](https://developer.github.com/webhooks/) and sent them to [HelpScout](https://helpscout.com) with the [Mailbox API 2.0](https://developer.helpscout.com/mailbox-api/). To link repositories to mailboxes we use the environment variable `HELP_SCOUT_MAILBOXES`. The stucture of the JSON looks like this:
+This is a server to collect `helpscout` events from Slack through [message actions](https://api.slack.com/actions) and sent them to [HelpScout](https://helpscout.com) with the [Mailbox API 2.0](https://developer.helpscout.com/mailbox-api/). To link repositories to mailboxes we use the environment variable `HELP_SCOUT_MAILBOXES`. The structure of the JSON looks like this:
 
 ```json
 {
@@ -9,7 +9,7 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
       "label": "<teamName>",
       "mailboxId": "<mailboxId>",
       "assignTo": "<assignTo>",
-      "repositories": [
+      "channels": [
         "<repoId>",
         "<repoId>",
       ]
@@ -17,7 +17,7 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
     {
       "label": "<teamName>",
       "mailboxId": "<mailboxId>",
-      "repositories": [
+      "channels": [
         "<repoId>",
         "<repoId>",
       ]
@@ -26,23 +26,27 @@ This is a server to collect `issues` events from GitHub through [webhooks](https
 }
 ```
 
+You need to create a Slack app, and set this endpoint as "Request URL" for the "interactivity" of the app.
+
 ### Run the production server
 
 ```
-GITHUB_WEBHOOK_SECRET=yourGitHubWebTokenSecret \
 HELP_SCOUT_APP_ID=yourHelpScoutAppId \
-HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecrect \
-HELP_SCOUT_MAILBOXES={...} \
+HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecret \
+HELP_SCOUT_APP_MAILBOXES={...} \
+SLACK_APP_TOKEN=yourSlackAppSecret \
+SLACK_SIGNING_SECRET=yourSlackSigningSecret \
 yarn start
 ```
 
-### Run the devlopment server
+### Run the development server
 
 ```
-GITHUB_WEBHOOK_SECRET=yourGitHubWebTokenSecret \
 HELP_SCOUT_APP_ID=yourHelpScoutAppId \
-HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecrect \
-HELP_SCOUT_MAILBOXES={...} \
+HELP_SCOUT_APP_SECRET=yourHelpScoutAppSecret \
+HELP_SCOUT_APP_MAILBOXES={...} \
+SLACK_APP_TOKEN=yourSlackAppSecret \
+SLACK_SIGNING_SECRET=yourSlackSigningSecret \
 yarn dev
 ```
 

@@ -14,21 +14,21 @@ describe('service', () => {
   });
 
   const createTestService = ({
-    githubWebhookSecret = 'mySuperSecretToken',
+    slackSigningSecret = 'mySuperSecretToken',
     helpScoutClient = createHelpScoutClient(),
     helpScoutMailboxes = {
-      data: [{ mailboxId: 1234, repositories: [5678] }],
+      data: [{ mailboxId: 1234, channels: ['blabla'] }],
     },
   }: Partial<ServiceConfiguration> = {}) =>
     createService({
-      githubWebhookSecret,
+      slackSigningSecret,
       helpScoutClient,
       helpScoutMailboxes,
     });
 
-  const createGithubSignature = ({ secrect, payload }: { secrect: string; payload: string }) => {
+  const createGithubSignature = ({ secret, payload }: { secret: string; payload: string }) => {
     const digest = crypto
-      .createHmac('sha1', secrect)
+      .createHmac('sha256', secret)
       .update(payload)
       .digest('hex');
 
@@ -48,7 +48,7 @@ describe('service', () => {
       headers: {
         ...headers,
         'X-Hub-Signature': createGithubSignature({
-          secrect: 'mySuperSecretToken',
+          secret: 'mySuperSecretToken',
           payload: JSON.stringify(body),
         }),
       },

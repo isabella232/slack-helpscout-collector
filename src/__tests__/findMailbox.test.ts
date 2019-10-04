@@ -2,32 +2,32 @@ import { Mailbox } from '../createService';
 import { findMailbox } from '../findMailbox';
 
 describe('findMailbox', () => {
-  it('expect to return a mailbox with a `repoId` that match', () => {
-    const repoId = 20;
-    const mailboxes = [{ mailboxId: 15, repositories: [20, 21] }];
+  it('expect to return a mailbox with a `channelId` that match', () => {
+    const channelId = 'CSSDSD';
+    const mailboxes = [{ mailboxId: 15, channels: ['CSSDSD', 'XCXC'] }];
 
-    const actual = findMailbox(mailboxes, repoId);
+    const actual = findMailbox(mailboxes, channelId);
 
     expect(actual).toEqual({
       mailboxId: 15,
-      repositories: [20, 21],
+      channels: ['CSSDSD', 'XCXC'],
     });
   });
 
-  it("expect to return `null` with a `repoId` that doesn't match", () => {
-    const repoId = 100;
-    const mailboxes = [{ mailboxId: 15, repositories: [20, 21] }];
+  it("expect to return `null` with a `channelId` that doesn't match", () => {
+    const channelId = 'FAKE';
+    const mailboxes = [{ mailboxId: 15, channels: ['CSSDSD', 'XCXC'] }];
 
-    const actual = findMailbox(mailboxes, repoId);
+    const actual = findMailbox(mailboxes, channelId);
 
     expect(actual).toBe(null);
   });
 
   it('expect to return `null` with data empty', () => {
-    const repoId = 100;
+    const channelId = 'NOTHING';
     const mailboxes: Mailbox[] = [];
 
-    const actual = findMailbox(mailboxes, repoId);
+    const actual = findMailbox(mailboxes, channelId);
 
     expect(actual).toBe(null);
   });

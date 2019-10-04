@@ -1,40 +1,31 @@
-import { RequestHandler, createError, text, json, send } from 'micro';
-import { validateGithubSignature } from './githubSignature';
+import { RequestHandler, send, createError, text } from 'micro';
 import { findMailbox } from './findMailbox';
 import { HelpScoutClient } from './helpScoutClient';
+import { WebClient } from '@slack/web-api';
 import { formatText } from './helpScoutTemplate';
-import { encodeHTML } from './encodeHTML';
+import { deriveInformation } from './slackAugmenter';
+import { validateSlackSignature } from './slackSignature';
 
 export type ServiceConfiguration = {
-  githubWebhookSecret: string;
   helpScoutClient: HelpScoutClient;
   helpScoutMailboxes: {
     data: Mailbox[];
   };
+  slackClient: WebClient;
+  slackSigningSecret: string;
 };
 
 export type Mailbox = {
   mailboxId: number;
   assignTo?: number;
-  repositories: number[];
-};
-
-type IssueEventPayload = {
-  action: string;
-  issue: {
-    title: string;
-    html_url: string;
-    body: string;
-  };
-  repository: {
-    id: number;
-  };
+  channels: string[];
 };
 
 export const createService: (configuration: ServiceConfiguration) => RequestHandler = ({
-  githubWebhookSecret,
   helpScoutClient,
   helpScoutMailboxes,
+  slackClient,
+  slackSigningSecret,
 }) => {
   return async (req, res) => {
     if (!req.method || req.method !== 'POST') {
@@ -43,32 +34,30 @@ export const createService: (configuration: ServiceConfiguration) => RequestHand
       throw createError(405, 'Only `POST` requests are allowed on this endpoint');
     }
 
-    const [isValidGithubSignature] = validateGithubSignature({
-      secret: githubWebhookSecret,
+    const body = await text(req);
+
+    const [isValid] = validateSlackSignature({
       headers: req.headers,
-      payload: await text(req),
+      payload: body,
+      secret: slackSigningSecret,
     });
 
-    if (!isValidGithubSignature) {
-      throw createError(401, 'Only GitHub requests are allowed on this endpoint');
+    if (!isValid) {
+      throw createError(401, 'Only Slack requests are allowed on this endpoint');
     }
 
-    const githubEventTypeHeader = req.headers['x-github-event'];
+    const info = await deriveInformation(body, slackClient);
 
-    if (!githubEventTypeHeader || githubEventTypeHeader !== 'issues') {
-      return send(res, 202, 'Only the event `issues` is supported by the hook');
+    if (typeof info === 'string') {
+      throw createError(405, info);
     }
 
-    const body = (await json(req)) as IssueEventPayload;
+    const { channel, channelName, content, link } = info;
 
-    if (body.action !== 'opened') {
-      return send(res, 202, 'Only the action `opened` is supported by the hook');
-    }
-
-    const mailbox = findMailbox(helpScoutMailboxes.data, body.repository.id);
+    const mailbox = findMailbox(helpScoutMailboxes.data, channel);
 
     if (!mailbox) {
-      return send(res, 202, `The hook does not support the repo: "${body.repository.id}"`);
+      return send(res, 202, `The hook does not support the channel: "${channelName}"`);
     }
 
     const { mailboxId, assignTo } = mailbox;
@@ -80,18 +69,15 @@ export const createService: (configuration: ServiceConfiguration) => RequestHand
       conversation: {
         mailboxId,
         assignTo,
-        subject: encodeHTML(body.issue.title),
+        subject: `[question imported from slack #${channelName}]`,
         customer: {
-          email: 'support+github@algolia.com',
+          email: 'support+slack@algolia.com',
         },
-        text: formatText({
-          content: body.issue.body,
-          link: body.issue.html_url,
-        }),
-        tags: ['github'],
+        text: formatText({ content, link }),
+        tags: ['slack'],
       },
     });
 
-    return send(res, 201, 'The GitHub issue has been pushed to HelpScout');
+    return send(res, 201, 'The Slack thread has been pushed to HelpScout');
   };
 };

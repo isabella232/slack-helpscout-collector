@@ -1,9 +1,9 @@
 {
-  "name": "github-helpscout-collector",
+  "name": "slack-helpscout-collector",
   "private": true,
-  "description": "Push GitHub issues to HelpScout",
+  "description": "Push Slack threads to HelpScout",
   "main": "dist/main.js",
-  "author": "Vaillant Samuel <samuel.vllnt@gmail.com>",
+  "authors": ["Vaillant Samuel <samuel.vllnt@gmail.com>", "Viaene Haroen <hello@haroen.me>"],
   "license": "MIT",
   "scripts": {
     "start": "micro -l tcp://0.0.0.0:$PORT",
@@ -38,8 +38,11 @@
     "typescript": "3.2.2"
   },
   "dependencies": {
+    "@slack/web-api": "^5.2.0",
+    "@types/tsscmp": "^1.0.0",
     "axios": "0.18.1",
     "marked": "0.6.1",
-    "micro": "9.3.3"
+    "micro": "9.3.3",
+    "tsscmp": "^1.0.6"
   }
 }
